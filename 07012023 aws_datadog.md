@@ -13,7 +13,8 @@ Questions:
 ----------
 
 1. You see a sudden and sustained spike in database errors in your datadog dashboards. While the initial investigation reveals resource constraint they don't fully explaing the magnitude of the spike (they do not explain exactly what is happening ) How exactly as an SRE and devops Engineer you would identify the root cause of the error search using datadog features and integrations?
-Ans. 
+Ans.
+--- 
 
 * We can use APM(Application Performance Monitoring) profiling to profile slow database queries and identify potential problematic statements.
 *  There is something known as anamoly detection so we can consider datadog anamoly detection algorithms to identify unusual patterns in data which might reveal previously unnoticed correlations 
@@ -22,6 +23,7 @@ Ans.
 
 2. Sometimes what happens is there is a performance degradation during any major event. Lets say there is a large user influx event like amazon sale, your website performance significantly degrades leading to complaints and potential revenue loss when you take a look at datadog dashboard they show increased error rates and API responses time. As a Devops Engineer how would you optimize performance during these kind of situation?
 Ans. 
+---
 * Resource utilization analysis you can monitor the resource utilization of key infrastructure components like host containers and load balancers to identify the bottlenecks
 * We have the feature of scalability testing as well.
 * We can leverage data using synthetic testing feature to proactively simulate the user influx and identify potential scaling issues before the actual event 
@@ -62,4 +64,6 @@ After the event, conduct a post-mortem analysis to identify what worked well and
 By implementing these strategies and leveraging Datadog for real-time monitoring and analysis, you can enhance the performance of your infrastructure during major events and mitigate the risk of revenue loss due to degraded user experience.
 
 3. You use both terraform and ansible in your organization which one do you prefer and why?
+
 Ans.
+---
