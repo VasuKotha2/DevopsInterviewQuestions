@@ -68,3 +68,7 @@ By implementing these strategies and leveraging Datadog for real-time monitoring
 
 * Answer:
 ---------
+* Both Terraform and Ansible are powerful tools for implementing Infrastructure as Code, but they have different strengths.
+* Terraform is geared towards service and cloud orchestration, while Ansible is optimized for configuration management. 
+* Some people prefer to use Terraform for infrastructure orchestration and Ansible for configuration management, while others use Ansible to provision cloud infrastructure. 
+* Ultimately, the choice between the two tools depends on your organization's IT priorities and the specific tasks you need to accomplish. In some cases, it may be best to use both tools together.
