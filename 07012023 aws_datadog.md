@@ -72,3 +72,80 @@ By implementing these strategies and leveraging Datadog for real-time monitoring
 * Terraform is geared towards service and cloud orchestration, while Ansible is optimized for configuration management. 
 * Some people prefer to use Terraform for infrastructure orchestration and Ansible for configuration management, while others use Ansible to provision cloud infrastructure. 
 * Ultimately, the choice between the two tools depends on your organization's IT priorities and the specific tasks you need to accomplish. In some cases, it may be best to use both tools together.
+
+4. Why do we need state file in terraform?
+* Answer:
+---------
+* In Terraform, the state file is used to keep track of the resources created by your configuration and map them to real-world resources. 
+* It is a JSON-encoded file that Terraform writes and reads at each operation. 
+* The state file is used to determine which changes to make to your infrastructure and to improve performance for large infrastructures. 
+* It is stored by default in a local file named "terraform.tfstate", but it is recommended to store it in Terraform Cloud to version, encrypt, and securely share it with your team. 
+* The state file should not be manually modified, and direct file editing of the state is discouraged. 
+* Terraform provides the terraform state command to perform basic modifications of the state. The state file format is subject to change in new Terraform versions, so it is important to ensure that the one-to-one rule is followed. 
+
+5. Consider that the state file was deleted how to recover it?
+* Answer:
+---------
+If the Terraform state file is deleted, you can proceed with the following steps to recover:
+* Restore from a backup: If you have a backup of the state file, you can restore it by moving the backup file to the location of the original state file and renaming it as terraform.tfstate. After that, run terraform init to re-initialize the state file
+* `mv terraform.tfstate.backup terraform.tfstate`
+  `terraform init`
+* Recover from corruption: If the state file is corrupted, you can try using the terraform state push and terraform state pull commands to recover the state
+  `terraform state push`
+  `terraform state pull`
+* Import existing resources: If you have made direct changes to the Azure resources from the Azure portal, you can use the `terraform import` command to import the existing resources into the Terraform state file
+  `terraform import .`
+* Re-import the resource: If you don't have a suitable state file, you can remove the bad resource from your current state file using the terraform state rm command and then re-import the resource using the terraform import command
+  `terraform state rm <resource_type> <resource_name>`
+  `terraform import .`
+
+6. what are some best practices for managing terraform state files?
+* Answer:
+----------
+* Remote State Storage: Instead of storing the state file locally, use remote state storage like Amazon S3, Azure Storage, or other cloud-based solutions. This allows for efficient sharing, recovery, and collaboration among team members
+  `terraform init -backend-config "bucket"="your_bucket_name" "key"="path/to/your/state/file"`
+* Separate State Files for Different Environments: Create separate state files for different environments, such as production, staging, and development. This prevents changes in one environment from affecting others
+  `terraform init -project-id "your_project_id" -backend-config "bucket"="your_bucket_name" "key"="path/to/your/state/file_dev"`
+* Version Control: Utilize version control (e.g., Git) for your Terraform configuration files and remote state storage. This allows you to track changes, collaborate with your team, and maintain an audit trail of each modification
+  `git add .`
+  `git commit -m "Add initial state file"`
+  `git push`
+* State Locking: Implement state locking to prevent multiple users from accidentally modifying the same state file at the same time. Terraform's native state locking feature can be used, or you can use third-party tools for more advanced locking options
+* Backup State Files: Regularly back up your state files to ensure recovery in case of corruption or loss
+  `terraform state pull`
+* Sensitive Data Caution: Be cautious when handling sensitive data in the Terraform state file. Use dedicated secrets management tools and avoid storing sensitive information in the state file
+* Avoid Direct File Editing: Do not directly edit the state file, as this can lead to inconsistencies and errors. Use Terraform commands like terraform state to perform basic modifications of the state file.
+
+7. Can you walk me through what you have done in kubernetes?
+* Answer:
+* When we write our CI/CD pipeline it pulls the image from ECR and then it deploys to EKS.
+* My roles and responsibilities in kubernetes are 
+  * Creating the Kubernetes cluster
+  * Managing the ingress and egress rules
+  * Managing the manifest files using customized to manage the config map generation
+  * Deploying, monitoring the applications in a Kubernetes environment
+  * Configuring hardware, services, managing settings and storage
+  * Improve the monitoring and alert system
+  * Troubleshoot issues and solve problems where needed
+
+8. Walk me through a recent issue you have resolved in kubernetes?
+* Answer:
+---------
+* A developer approached me on test environment saying that he has this issue like while he is testing out his API sometimes he makes the request and he makes thorugh but some times he fails. He does not understand why this is and he approached me 
+  * I went into the cluster and I started trouble shooting and I discovered that the problem is it was drawing out of memory that's OOMKilled error so that's out of memory exception so what was happening was some times he makes a request and he goes through and after making subsequent requests it is consuming so much of memory and slowing down. Basically its a test environment so you dont spend much cost on test environments. 
+  * Our restart policy in kubernetes is like whenever a pod crashes it will restart that pod again so if the request was placed during the time when pod crashed his request is failing.
+  * I discussed the same thing to him and I have increased the memory capacity for that particular microservice and that's how the issue got resolved.
+
+9. You have a critical application running on EKS with two replicas in a single essential pod disruption budget(PDB). A node needs scheduled maintenance. During the maintenance one replica inevitably get evicted as there is only one node, however the application requires atleast one healthy replica available all the time. How will you solve it?
+* Answer:
+---------
+* Step-1: 
+
+Drain the node
+`kubectl drain `
+This will gracefully evict the pod from the node and it will reschedule it to another healthy node then you can ensure that PDB minimum available replicas are still met while migrating
+
+* Step-2:
+----------
+* Next step is to use rolling updates with surge and readiness probe so you can configure a deployment both with surge and readiness probes.
+  Because of that what will happen is 
